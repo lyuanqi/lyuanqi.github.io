@@ -145,7 +145,7 @@
         </li>
         <li>Copy output files from HDFS to local:
             <pre>
-<strong>$namenode:</strong> bin/hadoop jar wc.jar WordCount /wordcount/input /wordcount/output</pre>
+<strong>$namenode:</strong> hdfs dfs -copyToLocal /wordcount/output /usr/local/hadoop/wordcount/output</pre>
         </li>
     </ol>
 </div> <!-- /container -->

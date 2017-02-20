@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)http://getbootstrap.com/examples/navbar-fixed-top/ -->
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" href="./images/logo.png">
+
+    <title>Setup</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="./css/custom.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- Fixed navbar -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" title="Logo">
+                <img style="max-width:100px; margin-top: -7px;"
+                     src="./images/logo_long.png">
+            </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="#">Setup</a></li>
+                <li><a href="user_guides.html">User Guides</a></li>
+                <li><a href="examples.html">Examples</a></li>
+                <li><a href="extra_materials.html">Extra Materials</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Select your OS:</h2>
+    <div class="list-group narrow-list">
+        <a href="https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html" class="list-group-item">
+            <span class="glyphicon glyphicon-link"></span>  Linux</a>
+        <a href="https://wiki.apache.org/hadoop/Hadoop2OnWindows" class="list-group-item">
+            <span class="glyphicon glyphicon-link"></span>  Windows</a>
+        <a href="https://amodernstory.com/2014/09/23/installing-hadoop-on-mac-osx-yosemite/" class="list-group-item">
+            <span class="glyphicon glyphicon-link"></span>  Mac</a>
+
+    </div>
+    <h2>Basic Configurations (All Nodes):</h2>
+    <p>Note: $HADOOP_CONF_DIR is an environment variable that points to the Hadoop configuration directory. e.g.: /usr/local/hadoop/etc/hadoop</p>
+    <div>
+        <h4 id="env">$HADOOP_CONF_DIR/hadoop-env.sh</h4>
+<pre>
+# The java implementation to use.
+export JAVA_HOME=<strong class="special">Java Home Directory</strong></pre>
+    </div>
+    <div>
+        <h4 id="core">$HADOOP_CONF_DIR/core-site.xml</h4>
+        <pre>
+&lt;configuration&gt;
+  &lt;property&gt;
+    &lt;name&gt;fs.defaultFS&lt;/name&gt;
+    &lt;value&gt;hdfs://<strong class="special">namenode_public_dns</strong>:9000&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/configuration&gt;</pre>
+    </div>
+    <div>
+        <h4 id="yarn">$HADOOP_CONF_DIR/yarn-site.xml</h4>
+        <pre>
+&lt;configuration&gt;
+&lt;! — Site specific YARN configuration properties →
+  &lt;property&gt;
+    &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+    &lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+    &lt;name&gt;yarn.nodemanager.aux-services.mapreduce.shuffle.class&lt;/name&gt;
+    &lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+    &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;
+    &lt;value&gt;<strong class="special">namenode_public_dns</strong>&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/configuration&gt;</pre>
+    </div>
+    <div>
+        <h4 id="mapred">$HADOOP_CONF_DIR/mapred-site.xml</h4>
+        <p>This file currently does not exist in the default Hadoop installation, but a template is available. We’ll make a copy of the template and rename it to mapred-site.xml</p>
+        <pre>
+&lt;configuration&gt;
+  &lt;property&gt;
+    &lt;name&gt;mapreduce.jobtracker.address&lt;/name&gt;
+    &lt;value&gt;<strong class="special">namenode_public_dns</strong>:54311&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+    &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+    &lt;value&gt;yarn&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/configuration&gt;
+        </pre>
+    </div>
+    <h2>NameNode Specific Configurations:</h2>
+    <div>
+        <h4>/etc/hosts:</h4>
+        <pre>
+127.0.0.1 localhost
+namenode_public_dns namenode_hostname
+datanode1_public_dns datanode1_hostname
+datanode2_public_dns datanode2_hostname
+datanode3_public_dns datanode3_hostname
+...
+...
+datanode<strong class="special">N</strong>_public_dns datanode<strong class="special">N</strong>_hostname
+
+# The following lines are desirable for IPv6 capable hosts
+::1 ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts</pre>
+    </div>
+    <div>
+        <h4>$HADOOP_CONF_DIR/masters:</h4>
+        <pre><strong>namenode_hostname</strong></pre>
+    </div>
+    <div>
+        <h4>$HADOOP_CONF_DIR/slaves:</h4>
+        <pre>
+<strong>datanode1_hostname</strong>
+<strong>datanode2_hostname</strong>
+<strong>datanode3_hostname</strong>
+<strong>...</strong>
+<strong>...</strong>
+<strong>datanodeN_hostname</strong></pre>
+    </div>
+    <div>
+        <h4>$HADOOP_CONF_DIR/hdfs-site.xml:</h4>
+        <pre>
+&lt;configuration&gt;
+  &lt;property&gt;
+    &lt;name&gt;dfs.replication&lt;/name&gt;
+    &lt;value&gt;<strong class="special">#of Replications</strong>&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+    &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+    &lt;value&gt;file://<strong class="special">NameNode Data Directory</strong>&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/configuration&gt;</pre>
+    </div>
+
+    <h2>DataNode Specific Configurations</h2>
+    <div>
+        <h4>$HADOOP_CONF_DIR/hdfs-site.xml:</h4>
+        <pre>
+&lt;configuration&gt;
+  &lt;property&gt;
+    &lt;name&gt;dfs.replication&lt;/name&gt;
+    &lt;value&gt;<strong class="special">#of Replications</strong>&lt;/value&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+    &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+    &lt;value&gt;file://<strong class="special">DataNode Data Directory</strong>&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/configuration&gt;</pre>
+    </div>
+</div> <!-- /container -->
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="./js/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="./js/jquery.min.js"><\/script>')</script>
+<script src="./js/bootstrap.min.js"></script>
+
+</body>
+</html>

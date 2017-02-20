@@ -5,5 +5,24 @@ body {
   width: 150px;
 }
 .medium-list {
-  width: 300px;
+  width: 350px;
+}
+pre {
+    white-space: pre-wrap;
+}
+pre.java {
+}
+.special {
+    color: red;
+}
+img.make-it-fit {
+    max-width: 70%;
+    max-height: 70%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+br {
+    content: " ";
+    display: none;
 }

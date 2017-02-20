@@ -26,9 +26,7 @@
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse"
-                    data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -41,7 +39,7 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="installation_guides.html">Installation Guides</a></li>
+                <li><a href="setup.html">Setup</a></li>
                 <li class="active"><a href="#">User Guides</a></li>
                 <li><a href="examples.html">Examples</a></li>
                 <li><a href="extra_materials.html">Extra Materials</a></li>
@@ -50,8 +48,54 @@
     </div>
 </nav>
 
-<div class="container">
 
+
+<div class="container">
+    <h2>Basic Commands</h2>
+    <p>Note: $HADOOP_HOME is an environment variable that points to the Hadoop home directory. e.g.: /usr/local/hadoop</p>
+    <div>
+        <h4>Start Hadoop Cluster</h4>
+        <pre>
+<strong>namenode$</strong> hdfs namenode -format
+<strong>namenode$</strong> $HADOOP_HOME/sbin/start-dfs.sh
+<strong>namenode$</strong> $HADOOP_HOME/sbin/start-yarn.sh
+<strong>namenode$</strong> $HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver</pre>
+    </div>
+
+    <div>
+        <h4>Stop Hadoop Cluster</h4>
+        <pre>
+<strong>namenode$</strong> $HADOOP_HOME/sbin/stop-dfs.sh
+<strong>namenode$</strong> $HADOOP_HOME/sbin/stop-yarn.sh
+<strong>namenode$</strong> $HADOOP_HOME/sbin/mr-jobhistory-daemon.sh stop historyserver</pre>
+    </div>
+
+    <h2>Common HDFS Commands</h2>
+    <pre>
+# List all files and folder in directory
+hdfs dfs -ls &lt;folder name&gt;
+
+# Make a directory on HDFS
+hdfs dfs -mkdir &lt;folder name&gt;
+
+# Copy a file from the local machine (namenode) into HDFS
+hdfs dfs -copyFromLocal &lt;local directory or file name&gt; &lt;HDFS directory&gt;
+
+# Copy a file from HDFS into the local machine (namenode)
+hdfs dfs -copyToLocal &lt;HDFS directory&gt; &lt;local directory or file name&gt;
+
+# Delete a file on HDFS
+hdfs dfs -rm &lt;file name&gt;
+
+# Delete a directory on HDFS
+hdfs dfs -rmdir &lt;folder name&gt;</pre>
+    <h2>Monitoring</h2>
+    <h4><a href="http://ec2-54-215-251-8.us-west-1.compute.amazonaws.com:50070/dfshealth.html#tab-datanode">Node Overview: namenode_public_dns:50070</a></h4>
+    <div><img class="make-it-fit" src="images/overview.png"></div>
+    <h4><a href="http://ec2-54-215-251-8.us-west-1.compute.amazonaws.com:8088/cluster">Job Status: namenode_public_dns:8088</a></h4>
+    <div><img class="make-it-fit" src="images/job.png"></div>
+    <h4><a href="http://ec2-54-215-251-8.us-west-1.compute.amazonaws.com:19888/jobhistory">Job History: namenode_public_dns:19888</a></h4>
+    <div><img class="make-it-fit" src="images/history.png"></div>
 
 </div> <!-- /container -->
 

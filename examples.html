@@ -26,9 +26,7 @@
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse"
-                    data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -41,7 +39,7 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="installation_guides.html">Installation Guides</a></li>
+                <li><a href="setup.html">Setup</a></li>
                 <li><a href="user_guides.html">User Guides</a></li>
                 <li class="active"><a href="#">Examples</a></li>
                 <li><a href="extra_materials.html">Extra Materials</a></li>
@@ -51,9 +49,105 @@
 </nav>
 
 <div class="container">
+    <h2>Word Count - Sample MapReduce Java Program</h2>
+<pre class="java" style='font-family: Courier New, Courier; font-size: 10pt; COLOR: #000000; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px;'><strong><font color='#7f0055'>import</font></strong>&nbsp;java.io.IOException;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;java.util.StringTokenizer;
+<br/>
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.conf.Configuration;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.fs.Path;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.io.IntWritable;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.io.Text;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.mapreduce.Job;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.mapreduce.Mapper;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.mapreduce.Reducer;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+<br/><strong><font color='#7f0055'>import</font></strong>&nbsp;org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+<br/>
+<br/><strong><font color='#7f0055'>public</font></strong>&nbsp;<strong><font color='#7f0055'>class</font></strong>&nbsp;WordCount&nbsp;{
+<br/>
+<br/>&nbsp;&nbsp;<strong><font color='#7f0055'>public</font></strong>&nbsp;<strong><font color='#7f0055'>static</font></strong>&nbsp;<strong><font color='#7f0055'>class</font></strong>&nbsp;TokenizerMapper
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>extends</font></strong>&nbsp;<strong class="special">Mapper</strong><Object,&nbsp;Text,&nbsp;Text,&nbsp;IntWritable>{
+<br/>
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>private</font></strong>&nbsp;<strong><font color='#7f0055'>final</font></strong>&nbsp;<strong><font color='#7f0055'>static</font></strong>&nbsp;IntWritable&nbsp;one&nbsp;=&nbsp;<strong><font color='#7f0055'>new</font></strong>&nbsp;IntWritable(1);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>private</font></strong>&nbsp;Text&nbsp;word&nbsp;=&nbsp;<strong><font color='#7f0055'>new</font></strong>&nbsp;Text();
+<br/>
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>public</font></strong>&nbsp;<strong><font color='#7f0055'>void</font></strong>&nbsp;map(Object&nbsp;key,&nbsp;Text&nbsp;value,&nbsp;Context&nbsp;context
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;<strong><font color='#7f0055'>throws</font></strong>&nbsp;IOException,&nbsp;InterruptedException&nbsp;{
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;StringTokenizer&nbsp;itr&nbsp;=&nbsp;<strong><font color='#7f0055'>new</font></strong>&nbsp;StringTokenizer(value.toString());
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>while</font></strong>&nbsp;(itr.hasMoreTokens())&nbsp;{
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;word.set(itr.nextToken());
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context.write(word,&nbsp;one);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;}
+<br/>&nbsp;&nbsp;}
+<br/>
+<br/>&nbsp;&nbsp;<strong><font color='#7f0055'>public</font></strong>&nbsp;<strong><font color='#7f0055'>static</font></strong>&nbsp;<strong><font color='#7f0055'>class</font></strong>&nbsp;IntSumReducer
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>extends</font></strong>&nbsp;<strong class="special">Reducer</strong><Text,IntWritable,Text,IntWritable>&nbsp;{
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>private</font></strong>&nbsp;IntWritable&nbsp;result&nbsp;=&nbsp;<strong><font color='#7f0055'>new</font></strong>&nbsp;IntWritable();
+<br/>
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>public</font></strong>&nbsp;<strong><font color='#7f0055'>void</font></strong>&nbsp;reduce(Text&nbsp;key,&nbsp;Iterable<IntWritable>&nbsp;values,
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Context&nbsp;context
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;<strong><font color='#7f0055'>throws</font></strong>&nbsp;IOException,&nbsp;InterruptedException&nbsp;{
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>int</font></strong>&nbsp;sum&nbsp;=&nbsp;0;
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong><font color='#7f0055'>for</font></strong>&nbsp;(IntWritable&nbsp;val&nbsp;:&nbsp;values)&nbsp;{
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;+=&nbsp;val.get();
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;result.set(sum);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;context.write(key,&nbsp;result);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;}
+<br/>&nbsp;&nbsp;}
+<br/>
+<br/>&nbsp;&nbsp;<strong><font color='#7f0055'>public</font></strong>&nbsp;<strong><font color='#7f0055'>static</font></strong>&nbsp;<strong><font color='#7f0055'>void</font></strong>&nbsp;main(String[]&nbsp;args)&nbsp;<strong><font color='#7f0055'>throws</font></strong>&nbsp;Exception&nbsp;{
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;Configuration&nbsp;conf&nbsp;=&nbsp;<strong><font color='#7f0055'>new</font></strong>&nbsp;Configuration();
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;Job&nbsp;job&nbsp;=&nbsp;Job.getInstance(conf,&nbsp;<font color='#2a00ff'>"word&nbsp;count"</font>);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;job.setJarByClass(WordCount.<strong><font color='#7f0055'>class</font></strong>);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;job.setMapperClass(TokenizerMapper.<strong><font color='#7f0055'>class</font></strong>);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;job.setCombinerClass(IntSumReducer.<strong><font color='#7f0055'>class</font></strong>);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;job.setReducerClass(IntSumReducer.<strong><font color='#7f0055'>class</font></strong>);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;job.setOutputKeyClass(Text.<strong><font color='#7f0055'>class</font></strong>);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;job.setOutputValueClass(IntWritable.<strong><font color='#7f0055'>class</font></strong>);
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;FileInputFormat.addInputPath(job,&nbsp;<strong><font color='#7f0055'>new</font></strong>&nbsp;Path(args[0]));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;FileOutputFormat.setOutputPath(job,&nbsp;<strong><font color='#7f0055'>new</font></strong>&nbsp;Path(args[1]));
+<br/>&nbsp;&nbsp;&nbsp;&nbsp;System.exit(job.waitForCompletion(<strong><font color='#7f0055'>true</font></strong>)&nbsp;?&nbsp;0&nbsp;:&nbsp;1);
+<br/>&nbsp;&nbsp;}
+</IntWritable></pre>
 
 
 
+    <h2>Program Execution:</h2>
+    <ol type="1">
+        <li>Upload MapReduce java program to namenode, e.g.:
+            <pre>
+<strong>$local:</strong> scp /Users/liyuanqi/Google\ Drive/UCLA_MSCS/Quarter2/CS239/Tool/WordCount.java aws1:/usr/local/hadoop</pre>
+        </li>
+        <li>Compile WordCount.java and create a jar:
+        <pre>
+<strong>$namenode:</strong> bin/hadoop com.sun.tools.javac.Main WordCount.java
+<strong>$namenode:</strong> jar cf wc.jar WordCount*.class</pre></li>
+        <li>Upload input files to namenode:
+            <pre>
+<strong>$local:</strong> scp /Users/liyuanqi/Google\ Drive/UCLA_MSCS/Quarter2/CS239/Tool/input/* aws1:/usr/local/hadoop/wordcount/input</pre></li>
+        <li>Upload input files to namenode HDFS:
+            <pre>
+# make input directory in HDFS
+<strong>$namenode:</strong> hdfs dfs -mkdir /wordcount
+<strong>$namenode:</strong> hdfs dfs -mkdir /wordcount/input
+
+# copy input files from namenode local to HDFS
+<strong>$namenode:</strong> hdfs dfs -copyFromLocal /usr/local/hadoop/wordcount/input/* /wordcount/input
+
+# list input directory to make sure input files were indeed uploaded
+<strong>$namenode:</strong> hdfs dfs -ls /wordcount/input </pre>
+        </li>
+        <li>Run the application:
+            <pre>
+<strong>$namenode:</strong> bin/hadoop jar wc.jar WordCount /wordcount/input /wordcount/output</pre>
+        </li>
+        <li>Copy output files from HDFS to local:
+            <pre>
+<strong>$namenode:</strong> bin/hadoop jar wc.jar WordCount /wordcount/input /wordcount/output</pre>
+        </li>
+    </ol>
 </div> <!-- /container -->
 
 
